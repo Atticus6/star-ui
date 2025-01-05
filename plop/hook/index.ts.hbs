@@ -1,0 +1,23 @@
+import { ref, watch } from 'vue'
+/**
+ * {{description}}
+ * 
+ * @function {{camelCase hookName}}
+ * @author {{usernmae}}<{{email}}>
+ * @date {{createAt}}
+ */
+export function {{camelCase hookName}}<T extends globalThis.Ref>(value: T, delay: number) {
+  const debouncedValue = ref(value.value)
+
+  let timeout: ReturnType<typeof setTimeout>
+
+  watch(value, (newValue) => {
+    if (timeout)
+      clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      debouncedValue.value = newValue
+    }, delay)
+  })
+
+  return debouncedValue
+}

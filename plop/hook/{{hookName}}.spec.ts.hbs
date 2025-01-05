@@ -1,0 +1,20 @@
+/* eslint-disable no-console */
+import { describe, expect, it, vi } from 'vitest'
+import { ref } from 'vue'
+import { {{camelCase hookName}} } from ".";
+
+describe('test {{camelCase hookName}}', () => {
+  it('should debounce the input value', async () => {
+    const inputValue = ref('')
+    const debouncedInputValue = {{camelCase hookName}}(inputValue, 300)
+    // 模拟用户输入
+    inputValue.value = 'Hello'
+
+    expect(debouncedInputValue.value).not.toBe('Hello')
+
+    // 等待 300ms 后再次检查
+    await new Promise(resolve => setTimeout(resolve, 350))
+
+    expect(debouncedInputValue.value).toBe('Hello')
+  })
+})
