@@ -11,6 +11,8 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'My Awesome Project',
   description: 'A VitePress Site',
+  lastUpdated: true,
+  useWebFonts: false,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -19,12 +21,20 @@ export default defineConfig({
       { text: '工具函数', link: '/utils' },
       { text: 'Hooks', link: '/hooks' },
     ],
+
+    docFooter: {
+      prev: '上一篇',
+      next: '下一篇',
+    },
+    returnToTopLabel: '返回顶部',
+    outlineTitle: '导航栏',
+    darkModeSwitchLabel: '外观',
+    sidebarMenuLabel: '归档',
+    lastUpdatedText: '最后一次更新于',
     search: {
       provider: 'local',
     },
-    lastUpdated: {
-      text: '最近更新',
-    },
+
     sidebar: {
       components: [
         {
@@ -69,6 +79,7 @@ export default defineConfig({
     ],
   },
   markdown: {
+    lineNumbers: true,
     config(md) {
       md.use(containerPreview)
       md.use(componentPreview)
@@ -78,8 +89,9 @@ export default defineConfig({
 
 function getFilesInDirectory(directoryPath: string) {
   try {
-    const files = readdirSync(`./docs/${directoryPath}`) // 同步读取文件夹内容
-    const filePaths = files.map(file => join(directoryPath, file)) // 生成完整路径
+    const files = readdirSync(`./docs/${directoryPath}`)
+    const markdownFiles = files.filter(file => extname(file) === '.md') // 只保留 Markdown 文件
+    const filePaths = markdownFiles.map(file => join(directoryPath, file))
     return filePaths
   }
   catch (error) {
