@@ -1,0 +1,24 @@
+<script setup lang="ts" >
+/**
+ * {{description}}
+ * 
+ * @author {{username}} <{{email}}>
+ * @date {{createAt}}
+ */
+defineOptions({
+   name: "St{{capitalize componentName}}",
+});
+const count = ref(0)
+function add() {
+  count.value++
+}
+</script>
+
+<template>
+  <a-button @click="add">
+    \{{ count }}
+  </a-button>
+</template>
+
+<style scoped>
+</style>

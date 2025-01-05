@@ -1,0 +1,16 @@
+/**
+ * {{description}}
+ * 
+ * @author {{username}} <{{email}}>
+ * @date {{createAt}}
+ */
+const {{capitalize componentName}} = defineComponent({
+  name: "St{{capitalize componentName}}",
+  setup() {
+    const count = ref(0)
+    return () => <a-button onClick={() => count.value++}>{count.value}</a-button>;
+  },
+});
+
+
+export default {{capitalize componentName}};

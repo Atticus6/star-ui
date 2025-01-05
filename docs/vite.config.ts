@@ -1,6 +1,7 @@
+import { resolve } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
@@ -12,9 +13,9 @@ export default defineConfig({
     hmr: {
       overlay: false,
     },
-    // fs: {
-    //   allow: [resolve(import.meta.url, "..")],
-    // },
+    fs: {
+      allow: [resolve(__dirname, '..')],
+    },
   },
   plugins: [
     UnoCSS(),

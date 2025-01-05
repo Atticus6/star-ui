@@ -22,17 +22,3 @@ features:
   - title: Feature C
     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 ---
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import {A}  from '@/components/form'
-const count = ref(0)
-
-const handleClick = () => {
-  count.value++
-}
-
-</script>
-
-<AButton @click="handleClick" >{{count}}</AButton>
-<A />

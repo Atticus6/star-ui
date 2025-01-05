@@ -1,3 +1,9 @@
 {
-  "recommendations": ["antfu.unocss"]
+  "recommendations": [
+    "antfu.unocss",
+    "vitest.explorer",
+    "vue.volar",
+    "hollowtree.vue-snippets",
+    "dbaeumer.vscode-eslint"
+  ]
 }
