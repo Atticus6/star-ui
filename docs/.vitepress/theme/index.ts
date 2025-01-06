@@ -6,6 +6,7 @@ import DefaultTheme from 'vitepress/theme'
 import 'virtual:uno.css'
 import 'ant-design-vue/dist/reset.css'
 import './glonal.css'
+import '@vitepress-demo-preview/component/dist/style.css'
 
 export default {
   ...DefaultTheme,

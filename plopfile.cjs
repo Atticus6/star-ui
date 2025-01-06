@@ -51,7 +51,7 @@ module.exports = function main(plop) {
               type: 'list',
               name: 'type',
               message: '请选择组件类型:',
-              choices: ['tsx', 'sfc'],
+              choices: ['sfc', 'tsx'],
             },
           ]
         : []), {
@@ -89,6 +89,15 @@ module.exports = function main(plop) {
           templateFiles: `plop/${gen + cmpType}/**`,
           destination: `./src/${gen}s/${generatorName}`,
           base: `plop/${gen + cmpType}`,
+          data,
+          abortOnFail: true,
+        })
+
+        actions.push({
+          type: 'addMany',
+          templateFiles: `plop/${gen + cmpType}-docs/**`,
+          destination: `./docs/${gen}s/`,
+          base: `plop/${gen + cmpType}-docs`,
           data,
           abortOnFail: true,
         })
