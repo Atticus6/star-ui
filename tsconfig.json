@@ -11,6 +11,7 @@
     "docs/.vitepress/components/*.vue",
     "docs/.vitepress/*.ts",
     "docs/.vitepress/config.ts",
+    "docs/**/*.vue",
     "./src/**/*.ts",
     "./src/**/*.vue",
     "./src/**/*.tsx"

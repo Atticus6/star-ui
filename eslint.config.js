@@ -6,5 +6,6 @@ export default antfu({
   unocss: true,
   rules: {
     'style/eol-last': 'off',
+    'no-console': 'off',
   },
 })
