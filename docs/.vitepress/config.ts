@@ -16,7 +16,7 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: '首页', link: '/' },
+      { text: '开始', link: '/start' },
       { text: '组件', link: '/components' },
       { text: '工具函数', link: '/utils' },
       { text: 'Hooks', link: '/hooks' },
@@ -36,6 +36,22 @@ export default defineConfig({
     },
 
     sidebar: {
+      start: [
+        {
+          text: '开始项目',
+          items: [
+            {
+              text: 'Vite插件',
+              link: '/start/vite',
+            },
+            {
+              text: '样式',
+              link: '/start/css',
+            },
+          ],
+
+        },
+      ],
       components: [
         {
           text: '组件',
