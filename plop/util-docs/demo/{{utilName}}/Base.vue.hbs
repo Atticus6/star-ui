@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { {{utilName}} } from '@/utils/{{utilName}}'
+const res = ref()
+function fn() {
+  res.value =  {{utilName}}(1,2)
+}
+</script>
+
+<template>
+  <div>
+    <a-button @click="fn">触发{{utilName}}</a-button>
+    <div>result:\{{res}}</div>
+  </div>
+</template>
