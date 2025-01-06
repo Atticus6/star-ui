@@ -68,7 +68,7 @@ export default defineConfig({
             extractFileNames(getFilesInDirectory('hooks')),
           ).map(text => ({
             text: text === 'index' ? '介绍' : text,
-            link: `/utils/${text}`,
+            link: `/hooks/${text}`,
           })),
         },
       ],

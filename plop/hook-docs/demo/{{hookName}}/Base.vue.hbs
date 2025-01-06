@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { {{camelCase hookName}} } from '@/hooks/{{hookName}}'
+const old = ref(0)
+const n = {{camelCase hookName}}(old,1000)
+function add() {
+  old.value++
+}
+</script>
+
+<template>
+  <div>
+    <a-button @click="add">old:\{{old}}</a-button>
+    <div>new:\{{n}}</div>
+  </div>
+</template>
