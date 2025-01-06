@@ -29,9 +29,11 @@ const Form = defineComponent({
       required: true,
     },
   },
-  setup({ form }) {
-    const { data } = form
-    const { components, defaultValues, ...rest } = form.props
+  // slots: Object as SlotsType<StFormSlots>,
+  setup(props, ctx) {
+    const { slots } = ctx
+    const { data } = props.form
+    const { components, defaultValues, ...rest } = props.form.props
     return () => (
       <a-form {...rest} model={data}>
 
@@ -45,7 +47,7 @@ const Form = defineComponent({
           )
         })}
         <a-form-item>
-          <a-button type="primary" html-type="submit">提交</a-button>
+          {slots.default?.()}
         </a-form-item>
       </a-form>
     )
@@ -69,11 +71,20 @@ type UserFormProps<T extends object > = Omit<FormProps, 'onFinish'> & {
   onFinish?: (value: T) => any
 }
 
-export function useForm<T extends Record<string, unknown> = any>(props: UserFormProps<T>) {
-  const data = reactive(props.defaultValues)
+export function useForm<T extends object = object>(props: UserFormProps<T>) {
+  const resetValue = { ...props.defaultValues }
+  const data = reactive({ ...resetValue })
+  const resetFields = () => {
+    Object.keys(data).forEach((key) => {
+      // eslint-disable-next-line ts/ban-ts-comment
+      // @ts-expect-error
+      data[key] = resetValue[key]
+    })
+  }
   return {
     data,
     props,
+    resetFields,
   }
 }
 

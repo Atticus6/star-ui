@@ -4,7 +4,7 @@ import Form, { useForm } from '@/components/form'
 const form = useForm(
   {
     name: 'baseic',
-    defaultValues: { name: '', age: '111', password: '' },
+    defaultValues: { name: '', age: '111' },
     onFinish(values) {
       console.log(values)
     },
@@ -15,6 +15,9 @@ const form = useForm(
         props: {
           allowClear: true,
         },
+        rules: [{
+          required: true,
+        }],
       },
       name: {
         label: '名称',
@@ -30,6 +33,10 @@ const form = useForm(
       password: {
         type: 'InputPassword',
         label: '密码',
+        required: true,
+        rules: [{
+          min: 6,
+        }],
         props: {
         },
       },
@@ -40,7 +47,14 @@ const form = useForm(
 
 <template>
   <div>
-    <Form :form="form" />
+    <Form :form="form">
+      <a-button type="primary" html-type="submit">
+        提交
+      </a-button>
+      <a-button @click="form.resetFields()">
+        重置
+      </a-button>
+    </Form>
     {{ form.data }}
   </div>
 </template>
