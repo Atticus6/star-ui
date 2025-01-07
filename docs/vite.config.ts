@@ -6,6 +6,7 @@ import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
+import { MarkdownTransform } from './.vitepress/plugins/markdownTransform'
 
 export default defineConfig(async () => {
   return {
@@ -21,6 +22,7 @@ export default defineConfig(async () => {
       },
     },
     plugins: [
+      MarkdownTransform(),
       UnoCSS(),
       vueJsx(),
       Components({

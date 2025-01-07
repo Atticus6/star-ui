@@ -128,7 +128,7 @@ function getGitUser() {
         name,
         email,
         contributions: 1,
-        avatar: '',
+        avatar: `https://i.pravatar.cc/150?img=${name}`,
       })
     }
     else {
