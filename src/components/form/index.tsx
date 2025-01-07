@@ -1,18 +1,16 @@
 import type { PropType } from 'vue'
-import { Button, type ButtonProps, type FormItemProps, type FormProps, Input, InputPassword, type InputProps, Select, type SelectProps } from 'ant-design-vue'
+import { type FormItemProps, type FormProps, Input, InputPassword, type InputProps, Select, type SelectProps } from 'ant-design-vue'
 
 const componentsList = {
   Input,
   Select,
   InputPassword,
-  Button,
 }
 
 interface ComponentsList {
   Input: InputProps
   Select: SelectProps
   InputPassword: ExtractPropTypes<typeof InputPassword>
-  Button: ButtonProps
 }
 
 /**

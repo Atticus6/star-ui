@@ -4,7 +4,6 @@ import { fileURLToPath, URL } from 'node:url'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
-import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 
@@ -27,11 +26,6 @@ export default defineConfig(async () => {
       Components({
         dts: '../src/types/components.d.ts',
         include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
-        resolvers: [
-          AntDesignVueResolver({
-            importStyle: false, // css in js
-          }),
-        ],
       }),
       AutoImport({
         imports: ['vue'],
