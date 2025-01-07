@@ -3,12 +3,12 @@
 layout: home
 
 hero:
-  name: "My Awesome Project"
-  text: "A VitePress Site"
+  name: "四达组件库"
+  text: "好用且简单"
   tagline: My great project tagline
   actions:
     - theme: brand
-      text: Markdown Examples
+      text: 开始
       link: /markdown-examples
     - theme: alt
       text: API Examples
@@ -52,7 +52,7 @@ const members =contributors.map(persion =>{
 <VPTeamPage>
   <VPTeamPageTitle>
     <template #title>
-      Our Team
+      我们团队
     </template>
     <template #lead>
       The development of VitePress is guided by an international

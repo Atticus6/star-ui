@@ -9,7 +9,7 @@ import {
 import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'My Awesome Project',
+  title: '四达组件库',
   description: 'A VitePress Site',
   lang: 'zh-CN',
   lastUpdated: true,
