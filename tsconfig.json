@@ -8,7 +8,6 @@
   },
   "include": [
     "docs",
-    "docs/.vitepress/components/*.vue",
     "docs/.vitepress/*.ts",
     "docs/.vitepress/config.ts",
     "docs/**/*.vue",
