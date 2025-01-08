@@ -9,6 +9,9 @@ const contributors = allContributors.filter(item => contributorsNames.includes(i
 </script>
 
 <template>
+  <h1 class="text-2xl font-medium">
+    贡献者
+  </h1>
   <div class="flex gap-2">
     <div v-for="(item) in contributors" :key="item.name" class="flex items-center gap-1">
       <img class="w-8 h-8 rounded-full" :src="item.avatar" :alt="item.name">
