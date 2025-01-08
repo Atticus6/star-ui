@@ -1,5 +1,8 @@
 @import './vp-code.css';
 @import './vp-code-title.css';
+@import './hidden.css';
+
+
 html.dark {
   color-scheme: dark;
 }
