@@ -4,12 +4,15 @@ import allContributors from '../../../../contributors.json'
 
 const { frontmatter } = useData()
 
-const contributorsNames = [frontmatter.value?.author, ...frontmatter.value.contributors || []].filter(x => x)
-const contributors = allContributors.filter(item => contributorsNames.includes(item.name))
+const contributors = computed(() => {
+  const contributorsNames = [frontmatter.value?.author, ...frontmatter.value.contributors || []].filter(x => x)
+  const res = allContributors.filter(item => contributorsNames.includes(item.name))
+  return res
+})
 </script>
 
 <template>
-  <h1 class="text-2xl font-medium">
+  <h1 v-if="contributors.length !== 0" class="text-2xl font-medium">
     贡献者
   </h1>
   <div class="flex gap-2">
