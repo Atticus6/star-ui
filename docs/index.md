@@ -6,6 +6,9 @@ hero:
   name: "四达组件库"
   text: "好用且简单"
   tagline: My great project tagline
+  image:
+    src: /it.svg
+    alt: hero
   actions:
     - theme: brand
       text: 开始
