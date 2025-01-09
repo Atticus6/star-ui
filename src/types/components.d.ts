@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ArticleMetadata: typeof import('./../../docs/.vitepress/theme/components/ArticleMetadata.vue')['default']
     Contributors: typeof import('./../../docs/.vitepress/theme/components/Contributors.vue')['default']
     MyLayout: typeof import('./../../docs/.vitepress/theme/components/MyLayout.vue')['default']
   }
