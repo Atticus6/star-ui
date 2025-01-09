@@ -6,6 +6,7 @@ import { NProgress } from 'nprogress-v2/dist/index.js' // 进度条组件
 import { inBrowser, useRoute } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import { nextTick, onMounted, watch } from 'vue'
+import ArticleMetadata from './components/ArticleMetadata.vue'
 import MyLayout from './components/MyLayout.vue'
 
 import 'virtual:uno.css'
@@ -19,6 +20,7 @@ export default {
   Layout: MyLayout,
   enhanceApp({ app, router }) {
     app.component('demo-preview', ElementPlusContainer)
+    app.component('ArticleMetadata', ArticleMetadata)
     app.use(Antd)
 
     if (inBrowser) {
