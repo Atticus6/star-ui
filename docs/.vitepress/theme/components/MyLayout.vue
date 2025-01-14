@@ -50,14 +50,14 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
       <!-- 插槽1 -->
       <template #aside-outline-before>
         <div class="title">
-          aside-outline-before
+          目录
         </div>
       </template>
 
       <!-- 插槽2 -->
       <template #doc-before>
         <div class="title">
-          doc-before
+          star-UI
         </div>
       </template>
 
