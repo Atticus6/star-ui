@@ -28,7 +28,8 @@ export default defineConfig({
       next: '下一篇',
     },
     returnToTopLabel: '返回顶部',
-    outlineTitle: '导航栏',
+    outlineTitle: '文章目录',
+    outline: [2, 6], // 侧边栏显示的层级
     darkModeSwitchLabel: '外观',
     sidebarMenuLabel: '归档',
     lastUpdatedText: '最后一次更新于',
@@ -40,16 +41,13 @@ export default defineConfig({
       start: [
         {
           text: '开始项目',
-          items: [
-            {
-              text: 'Vite插件',
-              link: '/start/vite',
-            },
-            {
-              text: '样式',
-              link: '/start/css',
-            },
-          ],
+          items: [{
+            text: '开发规范',
+            link: '/start',
+          }, {
+            text: 'Vite插件',
+            link: '/start/vite',
+          }],
 
         },
       ],
