@@ -42,6 +42,9 @@ module.exports = function main(plop) {
           if (value.includes(' ')) {
             return `${nickname}的名字不能有空格`
           }
+          if (value.includes('_')) {
+            return `${nickname}的名字不能有下划线,推荐使用-`
+          }
 
           return true
         },
