@@ -17,8 +17,8 @@ npm install moment @ant-design/icons-vue
 
 ## 基础用法
 ::: preview
-demo-preview=./demo/time_range_model/Base.vue
+demo-preview=./demo/time-range-model/Base.vue
 :::
 
 ## 源代码
-<<< ../../src/components/time_range_model/index.vue
+<<< ../../src/components/time-range-model/index.vue

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TimeRangeModel from '@/components/time_range_model/index.vue'
+import TimeRangeModel from '@/components/time-range-model/index.vue'
 import { ref } from 'vue'
 
 const timeRangeData = ref<any>({})
