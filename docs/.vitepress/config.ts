@@ -1,4 +1,4 @@
-import { readdirSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { basename, extname, join } from 'node:path'
 import {
   componentPreview,
@@ -7,6 +7,7 @@ import {
   // @ts-expect-error
 } from '@vitepress-demo-preview/plugin'
 import { defineConfig } from 'vitepress'
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: '四达组件库',
@@ -41,14 +42,10 @@ export default defineConfig({
       start: [
         {
           text: '开始项目',
-          items: [{
-            text: '开发规范',
-            link: '/start',
-          }, {
-            text: 'Vite插件',
-            link: '/start/vite',
-          }],
-
+          items: [
+            { text: '开发规范', link: '/start' },
+            { text: 'Vite插件', link: '/start/vite' },
+          ],
         },
       ],
       components: [
@@ -56,13 +53,10 @@ export default defineConfig({
           text: '组件',
           items: sortFilenames(
             extractFileNames(getFilesInDirectory('components')),
-          ).map(text => ({
-            text: text === 'index' ? '介绍' : text,
-            link: `/components/${text}`,
+          ).map(({ title, filePath }) => ({
+            text: title === 'index' ? '介绍' : title,
+            link: `/${filePath.replace(/\.md$/, '')}`,
           })),
-          // items: [
-          //   { text: "Markdown Examples", link: "/markdown-examples" },
-          // ],
         },
       ],
       utils: [
@@ -70,9 +64,9 @@ export default defineConfig({
           text: '工具函数',
           items: sortFilenames(
             extractFileNames(getFilesInDirectory('utils')),
-          ).map(text => ({
-            text: text === 'index' ? '介绍' : text,
-            link: `/utils/${text}`,
+          ).map(({ title, filePath }) => ({
+            text: title === 'index' ? '介绍' : title,
+            link: `/${filePath.replace(/\.md$/, '')}`,
           })),
         },
       ],
@@ -81,9 +75,9 @@ export default defineConfig({
           text: 'Hooks',
           items: sortFilenames(
             extractFileNames(getFilesInDirectory('hooks')),
-          ).map(text => ({
-            text: text === 'index' ? '介绍' : text,
-            link: `/hooks/${text}`,
+          ).map(({ title, filePath }) => ({
+            text: title === 'index' ? '介绍' : title,
+            link: `/${filePath.replace(/\.md$/, '')}`,
           })),
         },
       ],
@@ -113,7 +107,11 @@ function getFilesInDirectory(directoryPath: string) {
   try {
     const files = readdirSync(`./docs/${directoryPath}`)
     const markdownFiles = files.filter(file => extname(file) === '.md') // 只保留 Markdown 文件
-    const filePaths = markdownFiles.map(file => join(directoryPath, file))
+    const filePaths = markdownFiles.map((file) => {
+      const filePath = join(directoryPath, file)
+      const content = readFileSync(`./docs/${filePath}`, 'utf-8') // 读取文件内容
+      return { filePath, content }
+    })
     return filePaths
   }
   catch (error) {
@@ -122,19 +120,21 @@ function getFilesInDirectory(directoryPath: string) {
   }
 }
 
-function extractFileNames(filePaths: string[]) {
-  return filePaths.map((filePath) => {
-    const fileName = basename(filePath, extname(filePath)) // 获取文件名并移除扩展名
-    return fileName
+// 从文件内容中提取一级标题（# 标题），如果没有找到一级标题，使用文件名
+function extractFileNames(fileInfos: { filePath: string, content: string }[]) {
+  return fileInfos.map(({ filePath, content }) => {
+    const match = content.match(/^#\s+(.*)/m) // 匹配一级标题
+    const title = match ? match[1].trim() : basename(filePath, extname(filePath)) // 如果找不到标题，使用文件名
+    return { title, filePath }
   })
 }
 
-function sortFilenames(fileNames: string[]) {
-  return fileNames.sort((a, b) => {
-    if (a === 'index')
+function sortFilenames(fileInfos: { title: string, filePath: string }[]) {
+  return fileInfos.sort((a, b) => {
+    if (a.title === 'index')
       return -1 // `index` 总是在最前
-    if (b === 'index')
+    if (b.title === 'index')
       return 1
-    return a.localeCompare(b) // 按字母顺序排序
+    return a.title.localeCompare(b.title) // 按字母顺序排序
   })
 }
