@@ -1,17 +1,14 @@
 ---
 title: throttle
-description: 节流
+description: 全局节流
 author: Jove
 contributors:  []
 ---
 
-# throttle
-
-## 源代码
-<<< ../../src/utils/throttle/index.ts
+# 全局节流
 
 ## initGlobalThrottleClick
-节流点击事件处理器。通过配置节流时间，仅对按钮元素或其父元素是按钮的点击事件进行节流处理，并排除包含 `no-throttle` 属性的元素。
+全局节流点击事件处理器。通过配置节流时间，仅对按钮元素或其父元素是按钮的点击事件进行节流处理，并排除包含 `no-throttle` 属性的元素。
 
 ## 参数
 
@@ -50,3 +47,6 @@ initGlobalThrottleClick(1000)
 
 #### 返回值
 - `boolean`：如果包含 `no-throttle` 属性，返回 `true`，否则返回 `false`。
+
+## 源代码
+<<< ../../src/utils/throttle/index.ts

@@ -7,9 +7,6 @@ contributors:  []
 
 # 公共函数
 
-## 源代码
-<<< ../../src/utils/public_function/index.ts
-
 ## 目录
 
 1. [数组相关工具函数](#数组相关工具函数)
@@ -154,3 +151,6 @@ const original = { a: 1, b: { c: 2 } }
 const copy = deepClone(original)
 console.log(copy) // 输出: {a: 1, b: {c: 2}}
 ```
+
+## 源代码
+<<< ../../src/utils/public_function/index.ts
