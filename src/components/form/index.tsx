@@ -23,24 +23,23 @@ const Form = defineComponent({
   name: 'StForm',
   props: {
     form: {
-      type: Object as PropType<ReturnType<typeof useForm<any>>>,
+      type: Object as PropType<ReturnType<typeof useForm<any, any>>>,
       required: true,
     },
   },
   // slots: Object as SlotsType<StFormSlots>,
   setup(props, ctx) {
     const { slots } = ctx
-    const { data } = props.form
+    const { formSchema } = props.form
     const { components, defaultValues, ...rest } = props.form.props
     return () => (
-      <a-form {...rest} model={data}>
-
+      <a-form {...rest} model={formSchema}>
         {Object.entries(components).map(([fieldName, config]) => {
-          const { type, props, ...r } = config
-          const Com = componentsList[type] as any
+          const { type, props, ...r } = config as FieldComponent
+          const Com = componentsList[type] as unknown as keyof typeof componentsList
           return (
             <a-form-item key={fieldName} {...r} name={fieldName}>
-              <Com v-model:value={data[fieldName]} {...props} />
+              {Com ? <Com v-model:value={formSchema[fieldName]} {...props} /> : <div>不受支持的组件</div>}
             </a-form-item>
           )
         })}
@@ -63,24 +62,29 @@ type FormComponents<T extends object = object> = {
   [K in keyof T]: FieldComponent;
 }
 
-type UserFormProps<T extends object > = Omit<FormProps, 'onFinish'> & {
-  defaultValues: T
-  components: FormComponents<T> & Record<string, FieldComponent>
-  onFinish?: (value: T) => any
+type FormSchema<T extends FormComponents> = {
+  [K in keyof T]: any;
+}
+type UserFormProps<T extends FormComponents, D extends object > = Omit<FormProps, 'onFinish'> & {
+  defaultValues: D
+  components: T
+  onFinish?: (value: Merge<FormSchema<T>, D>) => any
 }
 
-export function useForm<T extends object = object>(props: UserFormProps<T>) {
+type Merge<A extends object, B extends object> = Omit<A, keyof B> & B
+
+export function useForm<T extends object = object, D extends object = FormSchema<T>>(props: UserFormProps<FormComponents<T>, D>) {
   const resetValue = { ...props.defaultValues }
-  const data = reactive({ ...resetValue })
+  const formSchema = reactive({ ...resetValue } as Merge<FormSchema<T>, D>)
   const resetFields = () => {
-    Object.keys(data).forEach((key) => {
+    Object.keys(formSchema).forEach((key) => {
       // eslint-disable-next-line ts/ban-ts-comment
       // @ts-expect-error
-      data[key] = resetValue[key]
+      formSchema[key] = resetValue[key]
     })
   }
   return {
-    data,
+    formSchema,
     props,
     resetFields,
   }

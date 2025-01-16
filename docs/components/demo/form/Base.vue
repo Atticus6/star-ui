@@ -4,9 +4,12 @@ import Form, { useForm } from '@/components/form'
 const form = useForm(
   {
     name: 'baseic',
-    defaultValues: { name: '', age: '111' },
+    defaultValues: { name: '', age: '111', password: '111' },
     onFinish(values) {
       console.log(values)
+    },
+    labelCol: {
+      span: 3,
     },
     components: {
       age: {
@@ -28,6 +31,13 @@ const form = useForm(
             { label: '选项1', value: '1' },
             { label: '选项2', value: '2' },
           ],
+        },
+      },
+      a: {
+        type: 'Input',
+        label: '测试',
+        props: {
+          allowClear: true,
         },
       },
       password: {
@@ -55,6 +65,6 @@ const form = useForm(
         重置
       </a-button>
     </Form>
-    {{ form.data }}
+    {{ form.formSchema }}
   </div>
 </template>
