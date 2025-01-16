@@ -2,7 +2,7 @@
 title: throttle
 description: 全局节流
 author: Jove
-contributors:  []
+contributors:  [wanglt]
 ---
 
 # 全局节流
@@ -49,4 +49,6 @@ initGlobalThrottleClick(1000)
 - `boolean`：如果包含 `no-throttle` 属性，返回 `true`，否则返回 `false`。
 
 ## 源代码
+::: code-group
 <<< ../../src/utils/throttle/index.ts
+:::

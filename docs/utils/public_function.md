@@ -2,7 +2,7 @@
 title: public_function
 description: 公共函数
 author: Jove
-contributors:  []
+contributors:  [wanglt]
 ---
 
 # 公共函数
@@ -153,4 +153,6 @@ console.log(copy) // 输出: {a: 1, b: {c: 2}}
 ```
 
 ## 源代码
+::: code-group
 <<< ../../src/utils/public_function/index.ts
+:::
