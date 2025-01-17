@@ -15,6 +15,8 @@ const table = useTable({
     x: 800,
   },
   editable: true,
+  // rowKey: 'id',
+  rowKey: record => record.id,
   rowClassName: (record, idx) => {
     return idx % 2 === 0 ? 'a' : 'd'
   },
@@ -46,14 +48,33 @@ const table = useTable({
       type: 'Input',
       props: {
         allowClear: true,
+        placeholder: '请输入名称',
       },
     },
     place: {
       title: '产地',
       width: 160,
+      type: 'Select',
+      props: {
+        class: 'w-full',
+        options: [
+          {
+            label: '上海',
+            value: '上海',
+          },
+          {
+            label: '北京',
+            value: '北京',
+          },
+        ],
+      },
     },
     amount: {
       title: '数量',
+      type: 'InputNumber',
+      props: {
+        class: 'w-full',
+      },
     },
     price: {
       title: '价格',

@@ -4,7 +4,6 @@ import type { DatePickerProps, RangePickerProps } from 'ant-design-vue/es/date-p
 import type { PropType } from 'vue'
 import { DatePicker, Input, InputNumber, InputPassword, RadioGroup, RangePicker, Select, Slider, Switch, TreeSelect, Upload } from 'ant-design-vue'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 const componentsList = {
   Input,
   Select,
@@ -38,7 +37,7 @@ type UnknowToAny<T extends object> = {
 }
 
 const TableCeil = defineComponent({
-
+  name: 'StTableCeil',
   props: {
     opt: {
       required: true,
@@ -46,25 +45,48 @@ const TableCeil = defineComponent({
     },
   },
   setup({ opt }) {
-    // const showCom = ref(false)
-
     // 单元格内容
     const Children = () => {
       if (!opt.column.customRender) {
-        return <div>{opt.value}</div>
+        return <div>{opt.record[opt.column.dataIndex]}</div>
       }
       else {
         return <div>{opt.column.customRender(opt)}</div>
       }
     }
+    if (!opt.column?.type) {
+      return () => {
+        return <Children />
+      }
+    }
+    const Com = componentsList[(opt.column?.type || 'Input') as ComponentsName]
+    const showCom = ref(false)
+    const elementRef = useTemplateRef<any>('elementRef')
 
-    // // @ts-expect-error
-    // const Com = componentsList[opt.column?.type || 'Input']
-
-    console.log(opt)
+    const showComComputed = computed(() => {
+      return showCom.value || (!opt.record[opt.column.dataIndex] && opt.record[opt.column.dataIndex] !== 0)
+    })
 
     return () => {
-      return <Children />
+      return (
+        <>
+          <Com v-show={showComComputed.value} {...opt.column.props} v-model:value={opt.record[opt.column.dataIndex]} onBlur={() => showCom.value = false} onFocus={() => showCom.value = true} ref="elementRef" />
+          <span
+            v-show={!showComComputed.value}
+            onClick={() => {
+              showCom.value = true
+              nextTick(() => {
+                if (elementRef.value) {
+                  elementRef.value.focus()
+                }
+              })
+            }}
+          >
+            <Children />
+          </span>
+
+        </>
+      )
     }
   },
 })
@@ -85,8 +107,7 @@ const Table = defineComponent({
   },
   setup({ table }, ctx) {
     const { api, status, dataSource, editable = false, ...rest } = table
-
-    const slots = { ...ctx.slots }
+    const slots = { ...ctx.slots } as Record<string, any>
     const fetcher = async () => {
       status.value = 'loading'
       const res = await api()
@@ -97,16 +118,13 @@ const Table = defineComponent({
         status.value = 'success'
       })
     })
-
     if (editable) {
       //  可编辑表格重写表格单元格
-      // eslint-disable-next-line ts/ban-ts-comment
-      // @ts-expect-error
-      slots.bodyCell = (arg) => {
+
+      slots.bodyCell = (arg: any) => {
         return <TableCeil opt={arg} />
       }
     }
-
     return () => (
       <a-table {...rest} dataSource={table.dataSource.value} loading={status.value === 'loading'}>
         {slots}
@@ -123,10 +141,11 @@ type TableColumnProps<T extends object, E extends boolean = false, C extends Com
 type TableColumns<T extends object, E extends boolean = false> = {
   [key in keyof T]: TableColumnProps<UnknowToAny<T>, E>
 }
-type UseTableProps<T extends object, E extends boolean > = Omit<TableProps<T>, 'columns'> & {
+type UseTableProps<T extends object, E extends boolean > = Omit<TableProps<T>, 'columns' | 'rowKey'> & {
   columns: TableColumns<T, E>
   api: () => Promise<T[]>
   editable?: E
+  rowKey: keyof T | ((reocrd: T) => keyof T)
 }
 export function useTable<T extends object = object, E extends boolean = false>(props: UseTableProps<UnknowToAny<T>, E>) {
   const dataSource = ref<T[]>([])
