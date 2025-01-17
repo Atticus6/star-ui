@@ -1,6 +1,7 @@
 import type { FormItemProps, FormProps, InputNumberProps, InputProps, RadioGroupProps, SelectProps, SliderProps, SwitchProps, TreeSelectProps, UploadProps } from 'ant-design-vue'
 import type { DatePickerProps, RangePickerProps } from 'ant-design-vue/es/date-picker'
 import type { PropType } from 'vue'
+import type { JSX } from 'vue/jsx-runtime'
 import { DatePicker, Input, InputNumber, InputPassword, RadioGroup, RangePicker, Select, Slider, Switch, TreeSelect, Upload } from 'ant-design-vue'
 
 const componentsList = {
@@ -45,7 +46,6 @@ const Form = defineComponent({
       required: true,
     },
   },
-  // slots: Object as SlotsType<StFormSlots>,
   setup(props, ctx) {
     const { slots } = ctx
     const { formSchema } = props.form
@@ -54,18 +54,29 @@ const Form = defineComponent({
       <a-form {...rest} model={formSchema}>
         {Object.entries(components).map(([fieldName, config]) => {
           const { type, props, ...r } = config as FieldComponent
-
           const Com = componentsList[type] as unknown as keyof typeof componentsList
+          const nslots = (props?.slots || {}) as object
+          const newSlots: any = {}
+          // 将带参函数转为无参函数
+          for (const key in nslots) {
+            // eslint-disable-next-line ts/ban-ts-comment
+            // @ts-expect-error
+            newSlots[key] = () => nslots[key]({ formSchema })
+          }
           return (
             <a-form-item key={fieldName} {...r} name={fieldName}>
               {Com
                 ? (
                     <>
                       {type === 'Switch'
-                        ? <Com v-model:checked={formSchema[fieldName]} {...props} />
+                        ? (
+                            <Com v-model:checked={formSchema[fieldName]} {...props}>
+                              {{ ...newSlots }}
+                            </Com>
+                          )
                         : (
                             <Com v-model:value={formSchema[fieldName]} {...props}>
-                              {{ ...(props?.slots || {}) }}
+                              {{ ...newSlots }}
                             </Com>
                           )}
                     </>
@@ -83,21 +94,25 @@ const Form = defineComponent({
 })
 
 type ComponentsName = keyof ComponentsList
-
-type FieldComponent<C extends ComponentsName = ComponentsName> = FormItemProps & {
-  type: C
-  props?: ComponentsList[C] & {
-    slots?: any
-  }
-
-}
-
 type FormComponents<T extends object = object> = {
-  [K in keyof T]: FieldComponent
+  [K in keyof T]: FieldComponent<T>
 }
 
 type FormSchema<T extends FormComponents> = {
   [K in keyof T]: any;
+}
+type UnknowToAny<T extends object> = {
+  [K in keyof T]: T[K] extends unknown ? any : T[K]
+}
+type SlotProps<T extends object> = {} & {
+  formSchema: UnknowToAny<T>
+}
+type FieldComponent<T extends object = object, C extends ComponentsName = ComponentsName> = FormItemProps & {
+  type: C
+  props?: ComponentsList[C] & {
+    slots?: Record<string, ({ formSchema }: SlotProps<T>) => JSX.Element>
+  }
+
 }
 type UserFormProps<T extends FormComponents, D extends object > = Omit<FormProps, 'onFinish'> & {
   defaultValues: D

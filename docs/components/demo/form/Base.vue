@@ -20,7 +20,7 @@ const form = useForm(
           // css 横向撑满
           class: 'w-full',
           slots: {
-            // prefix插槽
+            // prefix无参插槽
             prefix: () => (
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user">
                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
@@ -119,10 +119,12 @@ const form = useForm(
         label: '上传',
         props: {
           slots: {
-            default: () => {
+            // 带参插槽
+            default: ({ formSchema }) => {
               return (
                 <a-button>
                   Upload
+                  {JSON.stringify(formSchema)}
                 </a-button>
               )
             },
