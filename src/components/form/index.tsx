@@ -1,16 +1,34 @@
+import type { FormItemProps, FormProps, InputNumberProps, InputProps, RadioGroupProps, SelectProps, SliderProps, SwitchProps, TreeSelectProps, UploadProps } from 'ant-design-vue'
+import type { DatePickerProps, RangePickerProps } from 'ant-design-vue/es/date-picker'
 import type { PropType } from 'vue'
-import { type FormItemProps, type FormProps, Input, InputPassword, type InputProps, Select, type SelectProps } from 'ant-design-vue'
+import { DatePicker, Input, InputNumber, InputPassword, RadioGroup, RangePicker, Select, Slider, Switch, TreeSelect, Upload } from 'ant-design-vue'
 
 const componentsList = {
   Input,
   Select,
   InputPassword,
+  DatePicker,
+  RangePicker,
+  InputNumber,
+  RadioGroup,
+  Slider,
+  Switch,
+  TreeSelect,
+  Upload,
 }
 
 interface ComponentsList {
   Input: InputProps
   Select: SelectProps
   InputPassword: ExtractPropTypes<typeof InputPassword>
+  InputNumber: InputNumberProps
+  DatePicker: DatePickerProps
+  RangePicker: RangePickerProps
+  RadioGroup: RadioGroupProps
+  Slider: SliderProps
+  Switch: SwitchProps
+  TreeSelect: TreeSelectProps
+  Upload: UploadProps
 }
 
 /**
@@ -36,10 +54,23 @@ const Form = defineComponent({
       <a-form {...rest} model={formSchema}>
         {Object.entries(components).map(([fieldName, config]) => {
           const { type, props, ...r } = config as FieldComponent
+
           const Com = componentsList[type] as unknown as keyof typeof componentsList
           return (
             <a-form-item key={fieldName} {...r} name={fieldName}>
-              {Com ? <Com v-model:value={formSchema[fieldName]} {...props} /> : <div>不受支持的组件</div>}
+              {Com
+                ? (
+                    <>
+                      {type === 'Switch'
+                        ? <Com v-model:checked={formSchema[fieldName]} {...props} />
+                        : (
+                            <Com v-model:value={formSchema[fieldName]} {...props}>
+                              {{ ...(props?.slots || {}) }}
+                            </Com>
+                          )}
+                    </>
+                  )
+                : <div>不受支持的组件</div>}
             </a-form-item>
           )
         })}
@@ -55,11 +86,14 @@ type ComponentsName = keyof ComponentsList
 
 type FieldComponent<C extends ComponentsName = ComponentsName> = FormItemProps & {
   type: C
-  props?: ComponentsList[C]
+  props?: ComponentsList[C] & {
+    slots?: any
+  }
+
 }
 
 type FormComponents<T extends object = object> = {
-  [K in keyof T]: FieldComponent;
+  [K in keyof T]: FieldComponent
 }
 
 type FormSchema<T extends FormComponents> = {
