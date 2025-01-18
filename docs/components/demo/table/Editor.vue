@@ -3,48 +3,53 @@ import Table, { useTable } from '@/components/table'
 import { MoneyCollectOutlined } from '@ant-design/icons-vue'
 
 function api() {
-  return fetch('https://6789ec35dd587da7ac280f91.mockapi.io/goods')
+  const url = new URL('https://6789ec35dd587da7ac280f91.mockapi.io/goods')
+  return fetch(url, {
+    method: 'GET',
+    headers: { 'content-type': 'application/json' },
+  })
     .then(res => res.json())
+}
+
+async function changeById(data: any, id: string) {
+  await fetch(`https://6789ec35dd587da7ac280f91.mockapi.io/goods/${id}`, {
+    method: 'PUT',
+    headers: {
+      'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+}
+
+async function deleteById(id: string) {
+  await fetch(`https://6789ec35dd587da7ac280f91.mockapi.io/goods/${id}`, {
+    method: 'DELETE',
+  })
 }
 
 const table = useTable({
   api,
   bordered: true,
   size: 'large',
-  scroll: {
-    x: 800,
-  },
   editable: true,
   // rowKey: 'id',
   rowKey: record => record.id,
+  onEditableChange(record, dataIndex) {
+    table.useLoading(changeById({
+      [dataIndex]: record[dataIndex],
+    }, record.id))
+  },
   rowClassName: (record, idx) => {
     return idx % 2 === 0 ? 'a' : 'd'
   },
-
-  // title插槽
-  // title: (record) => {
-  //   return (
-  //     <div>
-  //       title
-  //     </div>
-  //   )
-  // },
-  // footer插槽
-  // footer: (record) => {
-  //   return (
-  //     <div>
-  //       footer
-  //     </div>
-  //   )
-  // },
   columns: {
     id: {
       title: 'ID',
       fixed: 'left',
     },
     name: {
-      title: '名称',
-      width: 160,
+      title: '名称(可编辑)',
       type: 'Input',
       props: {
         allowClear: true,
@@ -52,8 +57,7 @@ const table = useTable({
       },
     },
     place: {
-      title: '产地',
-      width: 160,
+      title: '产地(可选择)',
       type: 'Select',
       props: {
         class: 'w-full',
@@ -78,7 +82,7 @@ const table = useTable({
     },
     price: {
       title: '价格',
-      width: 160,
+
       customRender({ value }) {
         return (
           <span>
@@ -99,7 +103,43 @@ const table = useTable({
         )
       },
     },
+    action: {
+      title: '操作',
+      width: 80,
+      customRender({ record }) {
+        return (
+          <div>
+            <a-popconfirm
+              title="确定删除吗?"
+              onConfirm={async () => {
+                await deleteById(record.id)
+                table.getData()
+              }}
+            >
+              <a>删除</a>
+            </a-popconfirm>
+          </div>
+        )
+      },
+      fixed: 'right',
+    },
   },
+  // title插槽
+  // title: (record) => {
+  //   return (
+  //     <div>
+  //       title
+  //     </div>
+  //   )
+  // },
+  // footer插槽
+  // footer: (record) => {
+  //   return (
+  //     <div>
+  //       footer
+  //     </div>
+  //   )
+  // },
 })
 </script>
 

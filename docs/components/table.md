@@ -7,9 +7,9 @@ contributors:  []
 
 # 表格
 
-## 基础用法
+## 可编辑表格
 ::: preview
-demo-preview=./demo/table/Base.vue
+demo-preview=./demo/table/Editor.vue
 :::
 
 ## 源代码
