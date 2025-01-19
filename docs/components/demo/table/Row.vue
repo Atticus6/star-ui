@@ -11,6 +11,11 @@ function api() {
     .then(res => res.json())
 }
 
+async function deleteById(id: string) {
+  await fetch(`https://6789ec35dd587da7ac280f91.mockapi.io/goods/${id}`, {
+    method: 'DELETE',
+  })
+}
 async function changeById(data: any, id: string) {
   await fetch(`https://6789ec35dd587da7ac280f91.mockapi.io/goods/${id}`, {
     method: 'PUT',
@@ -25,15 +30,8 @@ const table = useTable({
   api,
   bordered: true,
   size: 'large',
-  editable: 'modal',
-  modalProps: {
-    title: '产品编辑',
-  },
+  editable: 'inRow',
   rowKey: 'id',
-  formProps: {
-    name: 'modal-form',
-    labelCol: { span: 6 },
-  },
   onEditableChange(data) {
     table.useLoading(changeById(data, data.id))
   },
@@ -45,22 +43,16 @@ const table = useTable({
     name: {
       title: '名称(可编辑)',
       type: 'Input',
+      width: 160,
       props: {
         allowClear: true,
         placeholder: '请输入名称',
-      },
-      formItemProps: {
-        rules: [
-          {
-            max: 5,
-            message: '最多5个字符',
-          },
-        ],
       },
     },
     place: {
       title: '产地(可选择)',
       type: 'Select',
+      width: 160,
       props: {
         class: 'w-full',
         options: [
@@ -76,14 +68,20 @@ const table = useTable({
       },
     },
     amount: {
-      title: '数量',
+      title: '数量(可输入)',
       type: 'InputNumber',
+      width: 200,
       props: {
         class: 'w-full',
       },
     },
     price: {
-      title: '价格',
+      title: '价格(可输入)',
+      type: 'InputNumber',
+      width: 200,
+      props: {
+        class: 'w-full',
+      },
       customRender({ value }) {
         return (
           <span>
@@ -95,9 +93,6 @@ const table = useTable({
     },
     total: {
       title: '总价',
-      formItemProps: {
-        hidden: true,
-      },
       customRender({ record }) {
         return (
           <span>
@@ -110,18 +105,18 @@ const table = useTable({
     action: {
       title: '操作',
       width: 100,
-      formItemProps: {
-        hidden: true,
-      },
       customRender({ record }) {
         return (
           <a-space>
-            <a onClick={() => {
-              table.openModal(record)
-            }}
+            <a-popconfirm
+              title="确定删除吗?"
+              onConfirm={async () => {
+                await deleteById(record.id)
+                table.getData()
+              }}
             >
-              编辑
-            </a>
+              <a>删除</a>
+            </a-popconfirm>
           </a-space>
         )
       },
@@ -133,12 +128,6 @@ const table = useTable({
 
 <template>
   <div>
-    <Table :table="table">
-      <template #modal>
-        <a-form-item name="other" label="扩展表单项">
-          <a-input v-model:value="table.modalDataSource.value.other" />
-        </a-form-item>
-      </template>
-    </Table>
+    <Table :table="table" />
   </div>
 </template>

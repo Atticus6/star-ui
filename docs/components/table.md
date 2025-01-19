@@ -7,7 +7,17 @@ contributors:  []
 
 # 表格
 
-## 可编辑表格
+## 基础用法
+::: preview
+demo-preview=./demo/table/Base.vue
+:::
+
+## 行内可编辑
+::: preview
+demo-preview=./demo/table/Row.vue
+:::
+
+## Modal可编辑
 ::: preview
 demo-preview=./demo/table/Editor.vue
 :::
