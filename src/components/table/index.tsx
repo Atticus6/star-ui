@@ -131,7 +131,7 @@ const Table = defineComponent({
     },
   },
   setup({ table }, ctx) {
-    const { api, status, dataSource, onEditableChange, editable = undefined, open, modalProps, formProps = {}, modalDataSource, getData, ...rest } = table
+    const { api, status, dataSource, onEditableChange, create, editable = undefined, open, modalProps, formProps = {}, modalDataSource, getData, ...rest } = table
     const slots = { ...ctx.slots } as Record<string, any>
     onMounted(() => {
       getData()
@@ -147,12 +147,19 @@ const Table = defineComponent({
         {slots}
       </a-table>
     )
-    if (editable === 'inRow') {
+    if (editable !== 'modal') {
       // 行内编辑提前返回结果
       return () => <Temp />
     }
-    const isCreate = Object.keys(table.modalDataSource?.value || {}).length > 0
+    const isCreate = ref(Object.keys(table.modalDataSource?.value || {}).length === 0)
     const modalFormRef = useTemplateRef<FormInstance>('modalFormRef')
+    if (open) {
+      watch(() => open.value, (newValue, oldValue) => {
+        if (newValue && newValue !== oldValue) {
+          isCreate.value = Object.keys(table.modalDataSource?.value || {}).length === 0
+        }
+      })
+    }
     const components = computed(() => {
       return rest.columns.map((item) => {
         const key = item.dataIndex as string
@@ -162,11 +169,11 @@ const Table = defineComponent({
         const Com = componentsList[(item.type || 'Input')]
         const comProps = (item.props || {}) as any
         if (key === rest.rowKey) {
-          if (isCreate) {
-            formItemProps.hidden = true
+          if (isCreate.value) {
+            formItemProps.hidden = formItemProps.hidden ?? true
           }
           else {
-            comProps.disabled = true
+            comProps.disabled = comProps.disabled ?? true
           }
         }
         return {
@@ -192,8 +199,10 @@ const Table = defineComponent({
               if (!res) {
                 return
               }
-              if (isCreate) {
-                console.log('create')
+              if (isCreate.value) {
+                if (create) {
+                  await table.useLoading(create(modalDataSource.value))
+                }
               }
               else if (onEditableChange) {
                 await onEditableChange(res)
@@ -238,7 +247,8 @@ type UseTableProps<T extends object, E extends Editable, R extends any[] > = Omi
   modalProps?: E extends 'modal' ? ModalProps : never
   formProps?: E extends 'modal' ? FormProps : never
   rowKey: keyof T | ((reocrd: T) => any)
-  onEditableChange?: E extends undefined ? never : (record: UnknowToAny<T>) => any
+  onEditableChange?: E extends undefined ? never : (record: UnknowToAny<T>) => Promise<any>
+  create?: E extends 'modal' ? (record: UnknowToAny<T>) => Promise<any> : never
 }
 export function useTable<T extends object = object, E extends Editable = undefined, R extends any[] = any[]>(props: UseTableProps<UnknowToAny<T>, E, R>) {
   const dataSource = ref<T[]>([])
@@ -265,7 +275,13 @@ export function useTable<T extends object = object, E extends Editable = undefin
     dataIndex: keyof T
   }))
 
-  const openModal = (data: UnknowToAny<T>) => {
+  const onEditableChange = (arg: any) => {
+    if (props.onEditableChange) {
+      return useLoading(props.onEditableChange(arg))
+    }
+  }
+
+  const openModal = (data?: UnknowToAny<T>) => {
     if (open) {
       open.value = true
       modalDataSource.value = { ...data }
@@ -281,6 +297,7 @@ export function useTable<T extends object = object, E extends Editable = undefin
     getData,
     useLoading,
     openModal,
+    onEditableChange,
 
   }
 }

@@ -22,6 +22,11 @@ demo-preview=./demo/table/Row.vue
 demo-preview=./demo/table/Editor.vue
 :::
 
+## 多行选中
+::: preview
+demo-preview=./demo/table/Select.vue
+:::
+
 ## 源代码
 ::: code-group
 <<< ../../src/components/table/index.tsx

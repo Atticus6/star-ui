@@ -16,25 +16,26 @@ async function deleteById(id: string) {
     method: 'DELETE',
   })
 }
-async function changeById(data: any, id: string) {
-  await fetch(`https://6789ec35dd587da7ac280f91.mockapi.io/goods/${id}`, {
-    method: 'PUT',
-    headers: {
-      'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-}
+
+const state = ref<{
+  selectedRowKeys: string[]
+  loading: boolean
+}>({
+  selectedRowKeys: ['1', '5'], // Check here to configure the default column
+  loading: false,
+})
+
 const table = useTable({
   api,
   bordered: true,
   size: 'large',
-  editable: 'inRow',
   rowKey: 'id',
-  onEditableChange(data) {
-    // 必须返回一个Promise
-    return changeById(data, data.id)
+  rowSelection: {
+    selectedRowKeys: state.value.selectedRowKeys,
+    onChange(v) {
+      console.log(v)
+      state.value.selectedRowKeys = v
+    },
   },
   columns: {
     id: {
@@ -42,47 +43,16 @@ const table = useTable({
       fixed: 'left',
     },
     name: {
-      title: '名称(可编辑)',
-      type: 'Input',
-      width: 160,
-      props: {
-        allowClear: true,
-        placeholder: '请输入名称',
-      },
+      title: '名称',
     },
     place: {
-      title: '产地(可选择)',
-      type: 'Select',
-      width: 160,
-      props: {
-        class: 'w-full',
-        options: [
-          {
-            label: '上海',
-            value: '上海',
-          },
-          {
-            label: '北京',
-            value: '北京',
-          },
-        ],
-      },
+      title: '产地',
     },
     amount: {
-      title: '数量(可输入)',
-      type: 'InputNumber',
-      width: 200,
-      props: {
-        class: 'w-full',
-      },
+      title: '数量',
     },
     price: {
-      title: '价格(可输入)',
-      type: 'InputNumber',
-      width: 200,
-      props: {
-        class: 'w-full',
-      },
+      title: '价格',
       customRender({ value }) {
         return (
           <span>
@@ -124,11 +94,13 @@ const table = useTable({
       fixed: 'right',
     },
   },
+
 })
 </script>
 
 <template>
   <div>
     <Table :table="table" />
+    {{ state.selectedRowKeys }}
   </div>
 </template>

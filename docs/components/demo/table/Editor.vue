@@ -15,12 +15,22 @@ async function changeById(data: any, id: string) {
   await fetch(`https://6789ec35dd587da7ac280f91.mockapi.io/goods/${id}`, {
     method: 'PUT',
     headers: {
-      'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   })
 }
+
+async function create(data: any) {
+  await fetch(`https://6789ec35dd587da7ac280f91.mockapi.io/goods`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+}
+
 const table = useTable({
   api,
   bordered: true,
@@ -28,15 +38,20 @@ const table = useTable({
   editable: 'modal',
   modalProps: {
     title: '产品编辑',
+    okText: '确定',
+    cancelText: '取消',
   },
   rowKey: 'id',
   formProps: {
     name: 'modal-form',
     labelCol: { span: 6 },
   },
+  // 返回一个Promise
   onEditableChange(data) {
-    table.useLoading(changeById(data, data.id))
+    return changeById(data, data.id)
   },
+  // 返回一个Promise
+  create,
   columns: {
     id: {
       title: 'ID',
@@ -52,6 +67,9 @@ const table = useTable({
       formItemProps: {
         rules: [
           {
+            required: true,
+          },
+          {
             max: 5,
             message: '最多5个字符',
           },
@@ -61,6 +79,13 @@ const table = useTable({
     place: {
       title: '产地(可选择)',
       type: 'Select',
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+          },
+        ],
+      },
       props: {
         class: 'w-full',
         options: [
@@ -78,12 +103,26 @@ const table = useTable({
     amount: {
       title: '数量',
       type: 'InputNumber',
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+          },
+        ],
+      },
       props: {
         class: 'w-full',
       },
     },
     price: {
       title: '价格',
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+          },
+        ],
+      },
       customRender({ value }) {
         return (
           <span>
@@ -127,6 +166,18 @@ const table = useTable({
       },
       fixed: 'right',
     },
+  },
+  title() {
+    return (
+      <a-button
+        type="primary"
+        onClick={() => {
+          table.openModal()
+        }}
+      >
+        新建
+      </a-button>
+    )
   },
 })
 </script>
