@@ -1,6 +1,7 @@
 <script setup lang="tsx">
 import Table, { useTable } from '@/components/table'
 import { MoneyCollectOutlined } from '@ant-design/icons-vue'
+import { SELECTION_ALL, SELECTION_INVERT, SELECTION_NONE } from 'ant-design-vue/es/table/hooks/useSelection'
 
 function api() {
   const url = new URL('https://6789ec35dd587da7ac280f91.mockapi.io/goods')
@@ -17,25 +18,20 @@ async function deleteById(id: string) {
   })
 }
 
-const state = ref<{
-  selectedRowKeys: string[]
-  loading: boolean
-}>({
-  selectedRowKeys: ['1', '5'], // Check here to configure the default column
-  loading: false,
-})
-
 const table = useTable({
   api,
   bordered: true,
   size: 'large',
   rowKey: 'id',
   rowSelection: {
-    selectedRowKeys: state.value.selectedRowKeys,
     onChange(v) {
       console.log(v)
-      state.value.selectedRowKeys = v
     },
+    selections: [
+      SELECTION_ALL,
+      SELECTION_INVERT,
+      SELECTION_NONE,
+    ],
   },
   columns: {
     id: {
@@ -96,11 +92,23 @@ const table = useTable({
   },
 
 })
+
+const { selectedRowKeys } = table.rowSelection
+
+onMounted(() => {
+  selectedRowKeys.value = ['5']
+})
 </script>
 
 <template>
   <div>
-    <Table :table="table" />
-    {{ state.selectedRowKeys }}
+    <Table :table="table">
+      <template #title>
+        <div v-show="selectedRowKeys.length !== 0">
+          <a-button>删除全部</a-button>
+        </div>
+      </template>
+    </Table>
+    {{ selectedRowKeys }}
   </div>
 </template>

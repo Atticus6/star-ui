@@ -1,6 +1,7 @@
 import type { TableColumnProps as _TableColumnProps, FormInstance, FormItemProps, FormProps, InputNumberProps, InputProps, ModalProps, RadioGroupProps, SelectProps, SliderProps, SwitchProps, TableProps, TreeSelectProps, UploadProps } from 'ant-design-vue'
 import type { DatePickerProps, RangePickerProps } from 'ant-design-vue/es/date-picker'
 
+import type { TableRowSelection } from 'ant-design-vue/es/table/interface'
 import type { PropType } from 'vue'
 import { DatePicker, Input, InputNumber, InputPassword, RadioGroup, RangePicker, Select, Slider, Switch, TreeSelect, Upload } from 'ant-design-vue'
 
@@ -131,7 +132,7 @@ const Table = defineComponent({
     },
   },
   setup({ table }, ctx) {
-    const { api, status, dataSource, onEditableChange, create, editable = undefined, open, modalProps, formProps = {}, modalDataSource, getData, ...rest } = table
+    const { api, status, dataSource, onEditableChange, create, editable = undefined, open, modalProps, formProps = {}, rowSelection, modalDataSource, getData, ...rest } = table
     const slots = { ...ctx.slots } as Record<string, any>
     onMounted(() => {
       getData()
@@ -143,7 +144,17 @@ const Table = defineComponent({
       }
     }
     const Temp = () => (
-      <a-table {...rest} dataSource={table.dataSource.value} loading={status.value === 'loading'}>
+      <a-table
+        {...rest}
+        dataSource={table.dataSource.value}
+        loading={status.value === 'loading'}
+        rowSelection={rowSelection
+          ? {
+              ...rowSelection,
+              selectedRowKeys: (rowSelection.selectedRowKeys as any).value,
+            }
+          : undefined}
+      >
         {slots}
       </a-table>
     )
@@ -239,7 +250,8 @@ type TableColumnProps<T extends object, E extends Editable = undefined, C extend
 type TableColumns<T extends object, E extends Editable = undefined> = {
   [key in keyof T]: TableColumnProps<UnknowToAny<T>, E>
 }
-type UseTableProps<T extends object, E extends Editable, R extends any[] > = Omit<TableProps<T>, 'columns' | 'rowKey'> & {
+type RowSelection<T extends object> = Omit<TableRowSelection<UnknowToAny<T>>, 'selectedRowKeys'> | undefined
+type UseTableProps<T extends object, E extends Editable, R extends any[], S extends RowSelection<T> > = Omit<TableProps<T>, 'columns' | 'rowKey' | 'rowSelection'> & {
   columns: TableColumns<T, E>
   //  请求数据接口
   api: (...args: R) => Promise<T[]>
@@ -247,14 +259,29 @@ type UseTableProps<T extends object, E extends Editable, R extends any[] > = Omi
   modalProps?: E extends 'modal' ? ModalProps : never
   formProps?: E extends 'modal' ? FormProps : never
   rowKey: keyof T | ((reocrd: T) => any)
+  rowSelection?: S extends undefined ? never : S
   onEditableChange?: E extends undefined ? never : (record: UnknowToAny<T>) => Promise<any>
   create?: E extends 'modal' ? (record: UnknowToAny<T>) => Promise<any> : never
 }
-export function useTable<T extends object = object, E extends Editable = undefined, R extends any[] = any[]>(props: UseTableProps<UnknowToAny<T>, E, R>) {
+export function useTable<T extends object = object, E extends Editable = undefined, R extends any[] = any[], S extends RowSelection<T> = RowSelection<T> >(props: UseTableProps<UnknowToAny<T>, E, R, S>) {
   const dataSource = ref<T[]>([])
   const status = ref<'loading' | 'error' | 'success'>('loading')
   const open = props?.editable === 'modal' ? ref(false) : undefined
   const modalDataSource = ref<WithReocrd<UnknowToAny<T>>>({} as WithReocrd<UnknowToAny<T>>)
+  const selectedRowKeys = ref<(string | number)[]>([])
+  const _rowSelection = props?.rowSelection
+    ? {
+        ...props.rowSelection,
+        selectedRowKeys,
+        onChange(v: (string | number)[], selectedRows: UnknowToAny<T>[]) {
+          selectedRowKeys.value = v
+          if (props.rowSelection?.onChange) {
+            props.rowSelection?.onChange(v, selectedRows)
+          }
+        },
+      }
+    : undefined
+  const rowSelection = _rowSelection as unknown as S extends undefined ? never : Omit<S, 'selectedRowKeys'> & { selectedRowKeys: typeof selectedRowKeys }
   async function useLoading<T>(p: Promise<T>) {
     status.value = 'loading'
     try {
@@ -294,11 +321,11 @@ export function useTable<T extends object = object, E extends Editable = undefin
     status,
     open,
     modalDataSource,
+    rowSelection,
     getData,
     useLoading,
     openModal,
     onEditableChange,
-
   }
 }
 
