@@ -1,16 +1,35 @@
+import type { FormItemProps, FormProps, InputNumberProps, InputProps, RadioGroupProps, SelectProps, SliderProps, SwitchProps, TreeSelectProps, UploadProps } from 'ant-design-vue'
+import type { DatePickerProps, RangePickerProps } from 'ant-design-vue/es/date-picker'
 import type { PropType } from 'vue'
-import { type FormItemProps, type FormProps, Input, InputPassword, type InputProps, Select, type SelectProps } from 'ant-design-vue'
+import type { JSX } from 'vue/jsx-runtime'
+import { DatePicker, Input, InputNumber, InputPassword, RadioGroup, RangePicker, Select, Slider, Switch, TreeSelect, Upload } from 'ant-design-vue'
 
 const componentsList = {
   Input,
   Select,
   InputPassword,
+  DatePicker,
+  RangePicker,
+  InputNumber,
+  RadioGroup,
+  Slider,
+  Switch,
+  TreeSelect,
+  Upload,
 }
 
 interface ComponentsList {
   Input: InputProps
   Select: SelectProps
   InputPassword: ExtractPropTypes<typeof InputPassword>
+  InputNumber: InputNumberProps
+  DatePicker: DatePickerProps
+  RangePicker: RangePickerProps
+  RadioGroup: RadioGroupProps
+  Slider: SliderProps
+  Switch: SwitchProps
+  TreeSelect: TreeSelectProps
+  Upload: UploadProps
 }
 
 /**
@@ -23,24 +42,46 @@ const Form = defineComponent({
   name: 'StForm',
   props: {
     form: {
-      type: Object as PropType<ReturnType<typeof useForm<any>>>,
+      type: Object as PropType<ReturnType<typeof useForm<any, any>>>,
       required: true,
     },
   },
-  // slots: Object as SlotsType<StFormSlots>,
   setup(props, ctx) {
     const { slots } = ctx
-    const { data } = props.form
+    const { formSchema } = props.form
     const { components, defaultValues, ...rest } = props.form.props
     return () => (
-      <a-form {...rest} model={data}>
-
+      <a-form {...rest} model={formSchema}>
         {Object.entries(components).map(([fieldName, config]) => {
-          const { type, props, ...r } = config
-          const Com = componentsList[type] as any
+          const { type, props, ...r } = config as FieldComponent
+          const Com = componentsList[type] as unknown as keyof typeof componentsList
+          const nslots = (props?.slots || {}) as object
+          const newSlots: any = {}
+          // 将带参函数转为无参函数
+          for (const key in nslots) {
+            // eslint-disable-next-line ts/ban-ts-comment
+            // @ts-expect-error
+            newSlots[key] = () => nslots[key]({ formSchema })
+          }
           return (
             <a-form-item key={fieldName} {...r} name={fieldName}>
-              <Com v-model:value={data[fieldName]} {...props} />
+              {Com
+                ? (
+                    <>
+                      {type === 'Switch'
+                        ? (
+                            <Com v-model:checked={formSchema[fieldName]} {...props}>
+                              {{ ...newSlots }}
+                            </Com>
+                          )
+                        : (
+                            <Com v-model:value={formSchema[fieldName]} {...props}>
+                              {{ ...newSlots }}
+                            </Com>
+                          )}
+                    </>
+                  )
+                : <div>不受支持的组件</div>}
             </a-form-item>
           )
         })}
@@ -53,34 +94,46 @@ const Form = defineComponent({
 })
 
 type ComponentsName = keyof ComponentsList
-
-type FieldComponent<C extends ComponentsName = ComponentsName> = FormItemProps & {
-  type: C
-  props?: ComponentsList[C]
-}
-
 type FormComponents<T extends object = object> = {
-  [K in keyof T]: FieldComponent;
+  [K in keyof T]: FieldComponent<T>
 }
 
-type UserFormProps<T extends object > = Omit<FormProps, 'onFinish'> & {
-  defaultValues: T
-  components: FormComponents<T> & Record<string, FieldComponent>
-  onFinish?: (value: T) => any
+type FormSchema<T extends FormComponents> = {
+  [K in keyof T]: any;
+}
+type UnknowToAny<T extends object> = {
+  [K in keyof T]: T[K] extends unknown ? any : T[K]
+}
+type SlotProps<T extends object> = {} & {
+  formSchema: UnknowToAny<T>
+}
+type FieldComponent<T extends object = object, C extends ComponentsName = ComponentsName> = FormItemProps & {
+  type: C
+  props?: ComponentsList[C] & {
+    slots?: Record<string, ({ formSchema }: SlotProps<T>) => JSX.Element>
+  }
+
+}
+type UserFormProps<T extends FormComponents, D extends object > = Omit<FormProps, 'onFinish'> & {
+  defaultValues: D
+  components: T
+  onFinish?: (value: Merge<FormSchema<T>, D>) => any
 }
 
-export function useForm<T extends object = object>(props: UserFormProps<T>) {
+type Merge<A extends object, B extends object> = Omit<A, keyof B> & B
+
+export function useForm<T extends object = object, D extends object = FormSchema<T>>(props: UserFormProps<FormComponents<T>, D>) {
   const resetValue = { ...props.defaultValues }
-  const data = reactive({ ...resetValue })
+  const formSchema = reactive({ ...resetValue } as Merge<FormSchema<T>, D>)
   const resetFields = () => {
-    Object.keys(data).forEach((key) => {
+    Object.keys(formSchema).forEach((key) => {
       // eslint-disable-next-line ts/ban-ts-comment
       // @ts-expect-error
-      data[key] = resetValue[key]
+      formSchema[key] = resetValue[key]
     })
   }
   return {
-    data,
+    formSchema,
     props,
     resetFields,
   }

@@ -6,6 +6,7 @@ import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
+import { groupIconVitePlugin } from 'vitepress-plugin-group-icons'
 
 export default defineConfig(async () => {
   return {
@@ -34,6 +35,7 @@ export default defineConfig(async () => {
         imports: ['vue'],
         dts: '../src/types/auto-imports.d.ts',
       }),
+      groupIconVitePlugin(),
     ],
     resolve: {
       alias: {

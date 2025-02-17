@@ -2,7 +2,7 @@
 title: TimeRangeModel
 description: 时间范围组件
 author: Jove
-contributors:  []
+contributors:  [wanglt]
 ---
 
 # 双向绑定数据的时间范围组件
@@ -21,4 +21,6 @@ demo-preview=./demo/time-range-model/Base.vue
 :::
 
 ## 源代码
+::: code-group
 <<< ../../src/components/time-range-model/index.vue
+:::
