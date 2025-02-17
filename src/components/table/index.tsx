@@ -1,5 +1,4 @@
-import type { TableColumnProps as _TableColumnProps, FormInstance, FormItemProps, FormProps, InputNumberProps, InputProps, ModalProps, RadioGroupProps, SelectProps, SliderProps, SwitchProps, TableProps, TreeSelectProps, UploadProps } from 'ant-design-vue'
-import type { DatePickerProps, RangePickerProps } from 'ant-design-vue/es/date-picker'
+import type { TableColumnProps as _TableColumnProps, DatePickerProps, FormInstance, FormItemProps, FormProps, InputNumberProps, InputProps, ModalProps, RadioGroupProps, SelectProps, SliderProps, SwitchProps, TableProps, TreeSelectProps, UploadProps } from 'ant-design-vue'
 
 import type { TableRowSelection } from 'ant-design-vue/es/table/interface'
 import type { PropType } from 'vue'
@@ -25,7 +24,7 @@ interface ComponentsList {
   InputPassword: ExtractPropTypes<typeof InputPassword>
   InputNumber: InputNumberProps
   DatePicker: DatePickerProps
-  RangePicker: RangePickerProps
+  RangePicker: ExtractPropTypes<typeof RangePicker>
   RadioGroup: RadioGroupProps
   Slider: SliderProps
   Switch: SwitchProps

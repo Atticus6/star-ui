@@ -1,7 +1,6 @@
 <script setup lang="tsx">
 import Table, { useTable } from '@/components/table'
 import { MoneyCollectOutlined } from '@ant-design/icons-vue'
-import { SELECTION_ALL, SELECTION_INVERT, SELECTION_NONE } from 'ant-design-vue/es/table/hooks/useSelection'
 
 function api() {
   const url = new URL('https://6789ec35dd587da7ac280f91.mockapi.io/goods')
@@ -28,9 +27,9 @@ const table = useTable({
       console.log(v)
     },
     selections: [
-      SELECTION_ALL,
-      SELECTION_INVERT,
-      SELECTION_NONE,
+      'SELECTION_ALL',
+      'SELECTION_INVERT',
+      'SELECTION_NONE',
     ],
   },
   columns: {
