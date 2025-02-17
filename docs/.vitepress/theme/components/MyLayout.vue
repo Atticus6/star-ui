@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ConfigProvider, theme } from 'ant-design-vue'
-import zhCN from 'ant-design-vue/es/locale/zh_CN'
+
 import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import Contributors from './Contributors.vue'
@@ -46,7 +46,7 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }: MouseEvent) => {
 </script>
 
 <template>
-  <ConfigProvider :theme="{ algorithm: isDark ? darkAlgorithm : defaultAlgorithm }" :locale="zhCN">
+  <ConfigProvider :theme="{ algorithm: isDark ? darkAlgorithm : defaultAlgorithm }">
     <Layout>
       <!-- 插槽1 -->
       <template #aside-outline-before>
